@@ -16,4 +16,3 @@ class Realdate < Formula
     system "#{bin}/realdate", "--version"
   end
 end
-|
