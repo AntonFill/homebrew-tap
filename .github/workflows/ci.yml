@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  # Manual runs matter here in a way they do not in the tool repositories: a
+  # formula can start failing without this repository changing at all, because
+  # Homebrew itself moved on.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -xeuo pipefail {0}
+
+jobs:
+  formulae:
+    name: Audit, build and test the formulae
+    runs-on: macos-26
+    steps:
+      - name: Set up Homebrew
+        # This also checks the repository out as the tap, which is what lets the
+        # formulae be addressed by name below. A plain file path does not work:
+        # `brew audit <path>` is disabled as of Homebrew 6.0 (measured 2026-08-18).
+        # Pinned by commit, the way Homebrew pins it in its own tap-new template.
+        uses: Homebrew/actions/setup-homebrew@b35a29a0f83ee8b8ca07b219fc8db3d7bb88ab49 # 2026.08.10.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trust this tap
+        # Homebrew 6.0 gates loading formulae from a non-official tap. Naming a
+        # formula in full already counts as explicit consent, so the steps below
+        # would pass without this, but that route depends on how the commands
+        # happen to be spelled. Trusting the tap once states it outright and
+        # survives the announced removal of HOMEBREW_NO_REQUIRE_TAP_TRUST.
+        run: brew trust --tap antonfill/tap
+
+      - name: Audit the formulae
+        run: brew audit --strict --online antonfill/tap/mail2md antonfill/tap/realdate
+
+      - name: Build both formulae from their released tag and run their tests
+        # This tap ships no bottles, so building from source is the delivery path
+        # rather than a stricter variant of it: the formula's url has to resolve
+        # to the tag tarball, the source has to compile, and `brew test` then runs
+        # the formula's own `test do` block against the installed binary.
+        run: |
+          brew install --build-from-source antonfill/tap/mail2md
+          brew test antonfill/tap/mail2md
+          brew install --build-from-source antonfill/tap/realdate
+          brew test antonfill/tap/realdate
