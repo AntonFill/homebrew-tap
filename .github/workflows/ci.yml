@@ -1,15 +1,25 @@
 name: CI
 
 on:
+  # Every run compiles both tools from source, which takes minutes. Restricting
+  # it to the files that can actually change the outcome keeps a documentation
+  # edit from triggering a full build: the README push on 2026-08-18 spent four
+  # and a half minutes proving something no one had touched.
   push:
     branches:
       - main
+    paths:
+      - "Formula/**"
+      - ".github/workflows/ci.yml"
   pull_request:
     branches:
       - main
-  # Manual runs matter here in a way they do not in the tool repositories: a
-  # formula can start failing without this repository changing at all, because
-  # Homebrew itself moved on.
+    paths:
+      - "Formula/**"
+      - ".github/workflows/ci.yml"
+  # Manual runs matter here in a way they do not in the tool repositories, and
+  # the path filter makes them matter more: a formula can start failing without
+  # this repository changing at all, because Homebrew itself moved on.
   workflow_dispatch:
 
 permissions:
