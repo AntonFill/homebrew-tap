@@ -1,8 +1,8 @@
 class Mail2md < Formula
   desc "Convert .eml files to Markdown with YAML frontmatter"
   homepage "https://github.com/AntonFill/mail2md"
-  url "https://github.com/AntonFill/mail2md/archive/refs/tags/v1.2.0.tar.gz"
-  sha256 "aa5ac511add53df68e5b92182ff5e631c3529ec4c6d93f3f0fbc7bb9c6840cb8"
+  url "https://github.com/AntonFill/mail2md/archive/refs/tags/v1.3.0.tar.gz"
+  sha256 "d2d553838122c29f9e9f43ca41d6320f68a80e6a50078cd4e3c9d918927865d9"
   license "MIT"
 
   depends_on xcode: ["16.0", :build]
