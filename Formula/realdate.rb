@@ -1,8 +1,8 @@
 class Realdate < Formula
   desc "Set macOS file timestamps from the date in the filename"
   homepage "https://github.com/AntonFill/realdate"
-  url "https://github.com/AntonFill/realdate/archive/refs/tags/v1.4.0.tar.gz"
-  sha256 "6dc606a9a33dda25e74bccaf537202592e335f7c11637a1d7beb1d25f1dbc615"
+  url "https://github.com/AntonFill/realdate/archive/refs/tags/v1.4.1.tar.gz"
+  sha256 "306bbef188bfbc1fe017d612e7acb2dfd274e1f57fdb74ee6bc46b1edbd735ea"
   license "MIT"
 
   depends_on xcode: ["16.0", :build]
