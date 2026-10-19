@@ -1,8 +1,8 @@
 class Mail2md < Formula
   desc "Convert .eml files to Markdown with YAML frontmatter"
   homepage "https://github.com/AntonFill/mail2md"
-  url "https://github.com/AntonFill/mail2md/archive/refs/tags/v1.3.1.tar.gz"
-  sha256 "ca7be3ae1014550f39924d7ea21e5e942efcc84bef3691e5d020acc7df03fc8f"
+  url "https://github.com/AntonFill/mail2md/archive/refs/tags/v1.4.0.tar.gz"
+  sha256 "7b8a3ccc7e06f511e27bc7425a3fc16f0e2663d2f46c5e4081ed0ad928e0e0ea"
   license "MIT"
 
   depends_on xcode: ["16.0", :build]
@@ -25,6 +25,10 @@ class Mail2md < Formula
 
     system bin/"mail2md", testpath/"mail.eml"
     assert_match "subject: \"Homebrew test\"", (testpath/"mail.md").read
+
+    # From stdin to stdout the note is the file, byte for byte.
+    note = (testpath/"mail.md").read
+    assert_equal note, pipe_output("#{bin}/mail2md -", (testpath/"mail.eml").read, 0)
 
     (testpath/"enclosure.eml").write <<~EML
       From: Jane Doe <jane@example.com>
