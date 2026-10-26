@@ -1,8 +1,8 @@
 class Mail2md < Formula
   desc "Convert .eml files to Markdown with YAML frontmatter"
   homepage "https://github.com/AntonFill/mail2md"
-  url "https://github.com/AntonFill/mail2md/archive/refs/tags/v1.4.0.tar.gz"
-  sha256 "7b8a3ccc7e06f511e27bc7425a3fc16f0e2663d2f46c5e4081ed0ad928e0e0ea"
+  url "https://github.com/AntonFill/mail2md/archive/refs/tags/v1.5.0.tar.gz"
+  sha256 "c2f9ca010ce7eabca1302ee45b9be3ea25c6796bf42fcc51054d4911be6b513a"
   license "MIT"
 
   depends_on xcode: ["16.0", :build]
@@ -29,6 +29,19 @@ class Mail2md < Formula
     # From stdin to stdout the note is the file, byte for byte.
     note = (testpath/"mail.md").read
     assert_equal note, pipe_output("#{bin}/mail2md -", (testpath/"mail.eml").read, 0)
+
+    # Obsidian's Markdown keeps a hashtag in the text from becoming a tag.
+    (testpath/"tag.eml").write <<~EML
+      From: Jane Doe <jane@example.com>
+      Subject: A hashtag
+      Date: Sun, 15 Jun 2026 09:41:00 +0000
+      Content-Type: text/plain; charset=utf-8
+
+      Greetings from #TeamExample
+    EML
+
+    assert_match "Greetings from \\#TeamExample",
+                 pipe_output("#{bin}/mail2md --format obsidian -", (testpath/"tag.eml").read, 0)
 
     (testpath/"enclosure.eml").write <<~EML
       From: Jane Doe <jane@example.com>
